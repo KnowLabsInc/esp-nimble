@@ -2687,6 +2687,21 @@ int ble_gap_set_path_loss_reporting_param(uint16_t conn_handle, uint8_t high_thr
 int ble_gap_set_data_related_addr_change_param(uint8_t adv_handle, uint8_t change_reason);
 
 /**
+ * Get Number of Outstanding Packets on Connection
+ *
+ * @param conn_handle       Connection handle
+ * @param outstanding_pkts  Return of current number of outstanding packets
+ *
+ * This returns the number of packets currently queued into the controller and
+ * not yet reported as completed by the controller.
+ * There may also be packets queued in the host and not yet sent to the
+ * controller, these are not included in the count.
+ *
+ * @return                  0 on success; nonzero on failure.
+ */
+int ble_gap_get_outstanding_pkts(uint16_t conn_handle, uint16_t *outstanding_pkts);
+
+/**
  * Start a test where the DUT generates reference packets at a fixed interval.
  *
  * @param tx_chan          Channel for sending test data,

@@ -8046,3 +8046,24 @@ ble_gap_host_check_status(void)
 
     return status;
 }
+
+int ble_gap_get_outstanding_pkts(uint16_t conn_handle, uint16_t *outstanding_pkts)
+{
+    struct ble_hs_conn *conn;
+    int rc;
+
+    if (!ble_hs_is_enabled()) {
+       return BLE_HS_EDISABLED;
+    }
+
+    ble_hs_lock();
+    conn = ble_hs_conn_find(conn_handle);
+    ble_hs_unlock();
+
+    if (conn == NULL) {
+        return BLE_HS_ENOTCONN;
+    }
+
+    *outstanding_pkts = conn->bhc_outstanding_pkts;
+    return 0;
+}
