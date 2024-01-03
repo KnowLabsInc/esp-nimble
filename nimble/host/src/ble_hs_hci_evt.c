@@ -214,6 +214,7 @@ ble_hs_hci_evt_disconn_complete(uint8_t event_code, const void *data,
 {
     const struct ble_hci_ev_disconn_cmp *ev = data;
     const struct ble_hs_conn *conn;
+    unsigned int outstanding_pkts = 0;
 
     if (len != sizeof(*ev)) {
         return BLE_HS_ECONTROLLER;
@@ -222,9 +223,13 @@ ble_hs_hci_evt_disconn_complete(uint8_t event_code, const void *data,
     ble_hs_lock();
     conn = ble_hs_conn_find(le16toh(ev->conn_handle));
     if (conn != NULL) {
-        ble_hs_hci_add_avail_pkts(conn->bhc_outstanding_pkts);
+        outstanding_pkts = conn->bhc_outstanding_pkts;
+        ble_hs_hci_add_avail_pkts(outstanding_pkts);
     }
     ble_hs_unlock();
+    if (outstanding_pkts) {
+        ble_gap_pkt_tx_complete_event(le16toh(ev->conn_handle), outstanding_pkts);
+    }
 
 #if MYNEWT_VAL(BLE_ENABLE_CONN_REATTEMPT)
     if (ev->reason == BLE_ERR_CONN_ESTABLISHMENT) {
@@ -377,6 +382,7 @@ ble_hs_hci_evt_num_completed_pkts(uint8_t event_code, const void *data,
                 ble_hs_hci_add_avail_pkts(num_pkts);
             }
             ble_hs_unlock();
+            ble_gap_pkt_tx_complete_event(le16toh(ev->completed[i].handle), num_pkts);
         }
     }
 

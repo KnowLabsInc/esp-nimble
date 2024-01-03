@@ -156,6 +156,7 @@ struct hci_conn_update;
 #define BLE_GAP_EVENT_SUBRATE_CHANGE        27
 #define BLE_GAP_EVENT_VS_HCI                28
 #define BLE_GAP_EVENT_REATTEMPT_COUNT       29
+#define BLE_GAP_EVENT_PKT_TX_COMPLETE       30
 
 /*** Reason codes for the subscribe GAP event. */
 
@@ -1112,6 +1113,20 @@ struct ble_gap_event {
 	    uint8_t count;
         } reattempt_cnt;
 #endif
+
+        /**
+         * Represents packets being completed in the controller.
+         *
+         * Valid for the following event types:
+         *     o BLE_GAP_EVENT_PKT_TX_COMPLETE
+         */
+        struct {
+            /* Connection handle */
+            uint16_t conn_handle;
+
+            /* Number of completed packets */
+            uint8_t count;
+        } pkt_tx_complete;
     };
 };
 
