@@ -7340,6 +7340,19 @@ ble_gap_authorize_event(uint16_t conn_handle, uint16_t attr_handle,
     return BLE_GAP_AUTHORIZE_REJECT;
 }
 
+void ble_gap_pkt_tx_complete_event(uint16_t conn_handle, uint8_t count)
+{
+    struct ble_gap_event event;
+
+    memset(&event, 0, sizeof event);
+    event.type = BLE_GAP_EVENT_PKT_TX_COMPLETE;
+    event.pkt_tx_complete.count = count;
+    event.pkt_tx_complete.conn_handle = conn_handle;
+
+    ble_gap_event_listener_call(&event);
+    ble_gap_call_conn_event_cb(&event, conn_handle);
+}
+
 void
 ble_gap_rx_test_evt(const void *buf, uint8_t len)
 {

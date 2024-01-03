@@ -159,6 +159,7 @@ struct hci_conn_update;
 #define BLE_GAP_EVENT_AUTHORIZE             30
 #define BLE_GAP_EVENT_TEST_UPDATE           31
 #define BLE_GAP_EVENT_DATA_LEN_CHG          32
+#define BLE_GAP_EVENT_PKT_TX_COMPLETE       40
 
 /* DTM events */
 #define BLE_GAP_DTM_TX_START_EVT            0
@@ -1152,6 +1153,21 @@ struct ble_gap_event {
 	    uint8_t count;
         } reattempt_cnt;
 #endif
+
+        /**
+         * Represents packets being completed in the controller.
+         *
+         * Valid for the following event types:
+         *     o BLE_GAP_EVENT_PKT_TX_COMPLETE
+         */
+        struct {
+            /* Connection handle */
+            uint16_t conn_handle;
+
+            /* Number of completed packets */
+            uint8_t count;
+        } pkt_tx_complete;
+
         /**
 	 * Represent a event for DTM test results
 	 *
